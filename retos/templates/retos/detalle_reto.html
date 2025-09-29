@@ -1,0 +1,130 @@
+{% extends 'retos/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2>{{ reto.titulo }}</h2>
+                <span class="badge bg-{% if reto.dificultad == 'F' %}success{% elif reto.dificultad == 'M' %}warning{% else %}danger{% endif %}">
+                    {{ reto.get_dificultad_display }}
+                </span>
+                <span class="badge bg-info">{{ reto.get_tipo_display }}</span>
+                <span class="badge bg-secondary">{{ reto.categoria.nombre }}</span>
+                <span class="badge bg-warning text-dark">{{ reto.puntos }} puntos</span>
+            </div>
+            <div class="card-body">
+                <p class="lead">{{ reto.descripcion }}</p>
+                <hr>
+                <div class="reto-content">
+                    {{ reto.contenido|linebreaks }}
+                </div>
+                
+                {% if intento_previo %}
+                    <div class="alert alert-{% if intento_previo.es_correcto %}success{% else %}danger{% endif %} mt-4">
+                        {% if intento_previo.es_correcto %}
+                            <h4>¡Correcto! 🎉</h4>
+                            <p>Has ganado {{ reto.puntos }} puntos por resolver este reto.</p>
+                        {% else %}
+                            <h4>Respuesta incorrecta 😔</h4>
+                            <p>Puedes intentar con otros retos.</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <form id="reto-form" class="mt-4">
+                        {% csrf_token %}
+                        
+                        {% if reto.tipo in 'MLP' %}
+                            <h5>Selecciona la respuesta correcta:</h5>
+                            {% for alternativa in reto.alternativas.all %}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="respuesta" id="alt{{ forloop.counter }}" value="{{ alternativa.id }}">
+                                <label class="form-check-label" for="alt{{ forloop.counter }}">
+                                    {{ alternativa.texto }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="mb-3">
+                                <label for="respuesta" class="form-label">Tu respuesta:</label>
+                                <input type="text" class="form-control" id="respuesta" name="respuesta" required>
+                            </div>
+                        {% endif %}
+                        
+                        <button type="submit" class="btn btn-primary">Enviar Respuesta</button>
+                    </form>
+                    
+                    <div id="resultado" class="mt-3"></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Información del Reto</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Tipo:</strong> {{ reto.get_tipo_display }}</p>
+                <p><strong>Dificultad:</strong> {{ reto.get_dificultad_display }}</p>
+                <p><strong>Categoría:</strong> {{ reto.categoria.nombre }}</p>
+                <p><strong>Puntos:</strong> {{ reto.puntos }}</p>
+                <p><strong>Creado:</strong> {{ reto.fecha_creacion|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Consejos</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>Lee cuidadosamente el enunciado</li>
+                    <li>Analiza todas las posibilidades</li>
+                    <li>No te rindas fácilmente</li>
+                    <li>Practica regularmente</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('reto-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultadoDiv = document.getElementById('resultado');
+        if (data.correcto) {
+            resultadoDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <h4>¡Correcto! 🎉</h4>
+                    <p>Has ganado {{ reto.puntos }} puntos.</p>
+                    <a href="{% url 'lista_retos' %}" class="btn btn-success">Continuar con otro reto</a>
+                </div>
+            `;
+        } else {
+            resultadoDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <h4>Respuesta incorrecta 😔</h4>
+                    <p>Intenta con otro reto o revisa tu respuesta.</p>
+                    <a href="{% url 'lista_retos' %}" class="btn btn-primary">Ver más retos</a>
+                </div>
+            `;
+        }
+        document.getElementById('reto-form').style.display = 'none';
+    });
+});
+</script>
+{% endblock %}

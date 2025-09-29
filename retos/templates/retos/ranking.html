@@ -1,0 +1,30 @@
+{% extends 'retos/base.html' %}
+
+{% block content %}
+<h1 class="mb-4">🏆 Ranking de Usuarios</h1>
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Posición</th>
+                    <th>Usuario</th>
+                    <th>Puntos Totales</th>
+                    <th>Retos Resueltos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ usuario.usuario.username }}</td>
+                    <td>{{ usuario.puntos_totales }}</td>
+                    <td>{{ usuario.retos_resueltos }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

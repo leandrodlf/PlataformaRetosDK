@@ -1,0 +1,61 @@
+{% extends 'retos/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="jumbotron bg-primary text-white p-5 rounded mb-4">
+            <h1 class="display-4">¡Bienvenido a la Plataforma de Retos!</h1>
+            <p class="lead">Pon a prueba tus habilidades lógicas y matemáticas con nuestros desafíos.</p>
+            <a class="btn btn-light btn-lg" href="{% url 'lista_retos' %}">Comenzar</a>
+        </div>
+
+        <h2 class="mb-4">Retos Destacados</h2>
+        <div class="row">
+            {% for reto in retos_destacados %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 dificultad-{{ reto.dificultad|lower }}">
+                    <div class="card-body">
+                        <span class="badge bg-{% if reto.dificultad == 'F' %}success{% elif reto.dificultad == 'M' %}warning{% else %}danger{% endif %} float-end">
+                            {{ reto.get_dificultad_display }}
+                        </span>
+                        <h5 class="card-title">{{ reto.titulo }}</h5>
+                        <p class="card-text">{{ reto.descripcion|truncatewords:20 }}</p>
+                        <a href="{% url 'detalle_reto' reto.id %}" class="btn btn-primary">Resolver</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">🏆 Ranking Top 10</h5>
+            </div>
+            <div class="card-body">
+                <ol class="list-group list-group-numbered">
+                    {% for usuario in ranking %}
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">{{ usuario.usuario.username }}</div>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">{{ usuario.puntos_totales }} pts</span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">📊 Estadísticas</h5>
+            </div>
+            <div class="card-body">
+                <p>Total de retos: {{ retos_destacados.count }}</p>
+                <p>Usuarios registrados: {{ ranking.count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
