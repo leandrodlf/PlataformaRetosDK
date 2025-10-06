@@ -118,4 +118,24 @@ def login_view(request):
                 'error': 'Usuario o contraseña incorrectos'
             })
     
+
     return render(request, 'retos/login.html')
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .esb_simple import ESBSimple
+
+esb = ESBSimple()
+
+@csrf_exempt
+def api_retos_esb(request):
+    if request.method == 'GET':
+        retos = Reto.objects.filter(activo=True)
+        datos_retos = list(retos.values('id', 'titulo', 'dificultad', 'puntos'))
+        
+        esb.log_operation("API_RETOS", "OBTENER_RETOS", f"{len(datos_retos)} retos obtenidos")
+        
+        return JsonResponse({'retos': datos_retos})
+    
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
