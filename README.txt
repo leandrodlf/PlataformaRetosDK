@@ -55,15 +55,31 @@ Instalación Paso a Paso
 7. Credenciales superusuario
 	Usuario: inacap
 	Password: inacap
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Lista de Endpoints
 
-Lista de "APIs" en el proyecto
+Páginas Web
+Endpoint					Método					Descripción
+/						GET					Página principal, muestra categorías, retos destacados y ranking de usuarios.
+/retos/						GET					Lista todos los retos filtrables por categoría y dificultad.
+/reto/<reto_id>/				GET					Detalle de un reto (formulario para responder).
+/ranking/					GET					Ranking de usuarios según puntos acumulados.
+/registro/					GET, POST				Registro de nuevos usuarios.
+/login/						GET, POST				Login de usuarios.
+/logout/					GET					Cierra sesión y redirige al home.
 
-Endpoint					Método			Descripción
-/detalle_reto/<reto_id>/	POST			Recibe la respuesta de un usuario a un reto y devuelve JSON indicando si la respuesta es correcta. ({'correcto': True/False})
-/							GET				Página principal, muestra categorías, retos destacados y ranking de usuarios.
-/retos/						GET				Lista todos los retos filtrables por categoría y dificultad.
-/reto/<reto_id>/			GET				Detalle de un reto (formulario para responder).
-/ranking/					GET				Ranking de usuarios según puntos acumulados.
-/registro/					GET, POST		Registro de nuevos usuarios.
-/login/						GET, POST		Login de usuarios.
-/logout/					GET				Cierra sesión y redirige al home.
+APIs Existentes
+
+Endpoint					Método					Descripción
+/reto/<reto_id>/				POST					Recibe la respuesta de un usuario a un reto y devuelve JSON indicando si la respuesta es correcta. ({'correcto': True/False})
+/api/retos/					GET	 				Obtiene lista de retos activos. Evidencia ESB en consola.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Evidencia del ESB
+URL: http://localhost:8000/api/retos/
+
+Al usar la nueva APIs, el ESB mostrará en la consola de Docker:
+
+🔗 ESB - API_RETOS ejecutó: OBTENER_RETOS
+
+   Datos: 62 retos obtenidos
+
